@@ -8,5 +8,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     `;
     answerBox.innerText = "Answer: " + msg.answer;
     document.body.appendChild(answerBox);
+
+    setTimeout(() => answerBox.remove(), 15000);
   }
 });
