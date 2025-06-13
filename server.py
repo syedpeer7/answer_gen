@@ -5,10 +5,12 @@ app = Flask(__name__)
 
 GEMINI_API_KEY = "AIzaSyCPxYEmoEf0CNHWXO8yIKKATzgoYEpby-E"  # Replace with your API key
 
+qa_history = []  # Store all Q&A pairs here
+
 def get_gemini_answer(question_with_options):
     prompt = f"""{question_with_options}
 
-    Select the correct answer from the options above. Only respond with the option letter or exact answer text."""
+Select the correct answer from the options above. Only respond with the option letter or exact answer text."""
 
     url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={GEMINI_API_KEY}"
     headers = {"Content-Type": "application/json"}
@@ -34,7 +36,13 @@ def question():
     print("Received question:", question_text)
     answer = get_gemini_answer(question_text)
     print("Answer:", answer)
+    # Add Q&A pair to history
+    qa_history.append({"question": question_text, "answer": answer})
     return jsonify({"answer": answer})
+
+@app.route('/answers', methods=['GET'])
+def answers():
+    return jsonify(qa_history)
 
 if __name__ == "__main__":
     app.run(port=5000)
